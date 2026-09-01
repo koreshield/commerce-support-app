@@ -689,7 +689,12 @@ function IntegrationView({ snapshot }: { snapshot: DashboardSnapshot }): React.R
           <span className={styles.eyebrow}>Runtime connections</span>
           <ConnectionRow configured={snapshot.integration.security.configured} icon={<Shield />} label="Security" value={`${snapshot.integration.security.provider} · ${snapshot.integration.security.mode}`} />
           <ConnectionRow configured={snapshot.integration.ai.configured} icon={<Bot />} label="AI" value={`${snapshot.integration.ai.provider} · ${snapshot.integration.ai.model}`} />
-          <ConnectionRow configured icon={<Database />} label="Data" value="SQLite · synthetic only" />
+          <ConnectionRow
+            configured
+            icon={<Database />}
+            label="Data"
+            value={`${snapshot.integration.data.provider.toUpperCase()} · synthetic only`}
+          />
           <p className={styles.connectionNote}>
             Simulator mode is functional and deterministic. Live mode requires server-side
             credentials and labels returned decisions as Koreshield or OpenAI evidence.

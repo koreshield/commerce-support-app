@@ -1,5 +1,5 @@
 import type { ActionProposalRecord, TenantId } from "@/lib/domain";
-import type { DemoRepository } from "@/lib/server/repository";
+import type { SupportRepository } from "@/lib/server/repository-contract";
 
 const APPROVAL_REQUIRED = new Set([
   "update_shipping_address",
@@ -14,10 +14,10 @@ export interface AuthorizationResult {
   reason: string;
 }
 
-export function authorizeAction(
+export async function authorizeAction(
   action: Pick<ActionProposalRecord, "toolName" | "args" | "tenantId">,
-  repo: DemoRepository,
-): AuthorizationResult {
+  repo: SupportRepository,
+): Promise<AuthorizationResult> {
   if (action.toolName === "export_customer_data") {
     return {
       allowed: false,
@@ -28,9 +28,10 @@ export function authorizeAction(
   const orderNumber = typeof action.args.order_number === "string" ? action.args.order_number : null;
   const orderId = typeof action.args.order_id === "string" ? action.args.order_id : null;
   const order = orderNumber
-    ? repo.getOrderByNumber(orderNumber)
+    ? await repo.getOrderByNumber(orderNumber)
     : orderId
-      ? repo.getOrders(action.tenantId).find((candidate) => candidate.id === orderId) ?? null
+      ? (await repo.getOrders(action.tenantId)).find((candidate) => candidate.id === orderId) ??
+        null
       : null;
   if (order && order.tenantId !== action.tenantId) {
     return {
@@ -48,15 +49,15 @@ export function authorizeAction(
   };
 }
 
-export function executeReadOnlyAction(
+export async function executeReadOnlyAction(
   toolName: ActionProposalRecord["toolName"],
   args: Record<string, unknown>,
   tenant: TenantId,
-  repo: DemoRepository,
-): Record<string, unknown> {
+  repo: SupportRepository,
+): Promise<Record<string, unknown>> {
   if (toolName === "lookup_order") {
     const number = typeof args.order_number === "string" ? args.order_number : "";
-    const order = repo.getOrderByNumber(number);
+    const order = await repo.getOrderByNumber(number);
     if (!order || order.tenantId !== tenant) return { found: false };
     return { found: true, order_number: order.number, status: order.status };
   }
@@ -64,22 +65,22 @@ export function executeReadOnlyAction(
   return { executed: false, reason: "Mutation requires approval." };
 }
 
-export function approveSandboxAction(
+export async function approveSandboxAction(
   action: ActionProposalRecord,
-  repo: DemoRepository,
-): Record<string, unknown> {
-  const authorization = authorizeAction(action, repo);
+  repo: SupportRepository,
+): Promise<Record<string, unknown>> {
+  const authorization = await authorizeAction(action, repo);
   if (!authorization.allowed) throw new Error(authorization.reason);
   if (action.status !== "awaiting_approval") throw new Error("Action is not awaiting approval.");
 
   if (action.toolName === "update_shipping_address") {
     const number = typeof action.args.order_number === "string" ? action.args.order_number : "";
     const address = typeof action.args.address === "string" ? action.args.address : "";
-    const order = repo.getOrderByNumber(number);
+    const order = await repo.getOrderByNumber(number);
     if (!order || order.tenantId !== action.tenantId || !address) {
       throw new Error("Order or address is invalid.");
     }
-    const updated = repo.updateOrderAddress(order.id, action.tenantId, address);
+    const updated = await repo.updateOrderAddress(order.id, action.tenantId, address);
     return { updated, order_number: number, shipping_address: address, sandbox: true };
   }
   return {

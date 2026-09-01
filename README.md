@@ -2,7 +2,7 @@
 
 A synthetic commerce-support application for demonstrating where Koreshield sits in a real AI workflow. It shows the complete path from an untrusted customer message, through private knowledge retrieval and model generation, to a proposed support action.
 
-The lab is safe to run locally. Its default configuration is deterministic, uses invented customer data, and makes no network calls. Mutating tools require an explicit operator approval, and payment and messaging providers are intentionally absent.
+The lab is safe to run locally. Its default configuration is deterministic, uses invented customer data, and makes no external provider calls. Mutating tools require an explicit operator approval, and payment and messaging providers are intentionally absent.
 
 ## What the demo proves
 
@@ -23,7 +23,7 @@ Requirements: Node.js 22 or newer and npm.
 ```bash
 npm ci
 cp .env.example .env.local
-npm run demo:reset
+npm run demo:prepare
 npm run dev
 ```
 
@@ -42,6 +42,7 @@ npm test             # workflow tests
 npm run test:e2e     # desktop and mobile browser tests
 npm run build        # optimized production build
 npm run check        # typecheck, lint, unit tests, and build
+npm run check:cloudflare # Worker types, OpenNext build, and deployment dry run
 ```
 
 For the first browser-test run, install Chromium with `npx playwright install chromium`.
@@ -53,6 +54,18 @@ docker compose up --build
 ```
 
 The app is available at [http://localhost:3000](http://localhost:3000). The synthetic SQLite database is stored in the `demo-data` volume. Use **Reset workspace** in the UI to restore the baseline.
+
+## Deploy to Cloudflare Workers
+
+The Worker deployment uses D1 for durable synthetic state:
+
+```bash
+npx wrangler d1 migrations apply commerce-support-demo --remote
+npm run check:cloudflare
+npm run cf:deploy
+```
+
+The checked-in Wrangler configuration targets the Koreshield Cloudflare account and its dedicated `commerce-support-demo` database. Read [the Cloudflare runbook](docs/CLOUDFLARE.md) before changing bindings, secrets, or routes.
 
 ## Optional live providers
 
@@ -76,17 +89,17 @@ Live Koreshield uses `POST /v1/scan`, `POST /v1/rag/scan`, and `POST /v1/tools/s
 ## Safety boundary
 
 - Every merchant, customer, order, message, and policy is synthetic.
-- SQLite queries are scoped by tenant, and the host application repeats authorization before every action.
+- Storage queries are scoped by tenant, and the host application repeats authorization before every action.
 - Address updates mutate only the local synthetic database and require operator approval.
 - Refund, cancellation, discount, export, and outbound-message integrations are not connected.
 - Reset restores the known baseline for repeatable demos.
 - This is a reference client and demonstration harness, not evidence that an external client has been qualified.
 
-Read [the architecture](docs/ARCHITECTURE.md), [the demo script](docs/DEMO_SCRIPT.md), and [the security model](docs/SECURITY_MODEL.md) before presenting it.
+Read [the architecture](docs/ARCHITECTURE.md), [the demo script](docs/DEMO_SCRIPT.md), [the security model](docs/SECURITY_MODEL.md), and [the Cloudflare runbook](docs/CLOUDFLARE.md) before presenting it.
 
 ## Technology
 
-Next.js 16, React 19, strict TypeScript, SQLite, Vitest, and Playwright. The application can run as a standalone Node.js service or as a container.
+Next.js 16, React 19, strict TypeScript, Cloudflare D1, SQLite, Vitest, and Playwright. The application runs on Cloudflare Workers through OpenNext and retains standalone Node.js and container support.
 
 ## License
 

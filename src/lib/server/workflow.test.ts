@@ -82,7 +82,9 @@ describe("protected commerce-support workflow", () => {
     expect(run.actions[0]?.result).toMatchObject({
       reason: "Application tenancy authorization rejected this order.",
     });
-    expect(deps.repo.getOrderByNumber("CIR-8841")?.shippingAddress).toBe("22 Allen Avenue, Ikeja");
+    expect((await deps.repo.getOrderByNumber("CIR-8841"))?.shippingAddress).toBe(
+      "22 Allen Avenue, Ikeja",
+    );
   });
 
   it("holds a legitimate mutation for approval and applies it only after approval", async () => {
@@ -92,16 +94,18 @@ describe("protected commerce-support workflow", () => {
 
     expect(run.status).toBe("awaiting_approval");
     expect(action?.status).toBe("awaiting_approval");
-    expect(deps.repo.getOrderByNumber("AC-1042")?.shippingAddress).toBe("14 Admiralty Way, Lekki");
+    expect((await deps.repo.getOrderByNumber("AC-1042"))?.shippingAddress).toBe(
+      "14 Admiralty Way, Lekki",
+    );
     if (!action) throw new Error("Expected an action proposal.");
 
-    const result = approveSandboxAction(action, deps.repo);
-    deps.repo.completeAction(action.id, "executed", result);
+    const result = await approveSandboxAction(action, deps.repo);
+    await deps.repo.completeAction(action.id, "executed", result);
 
-    expect(deps.repo.getOrderByNumber("AC-1042")?.shippingAddress).toBe(
+    expect((await deps.repo.getOrderByNumber("AC-1042"))?.shippingAddress).toBe(
       "8 Bourdillon Road, Ikoyi",
     );
-    expect(deps.repo.getAction(action.id)?.status).toBe("executed");
+    expect((await deps.repo.getAction(action.id))?.status).toBe("executed");
   });
 
   it("restores the seeded baseline on reset", async () => {
@@ -109,19 +113,21 @@ describe("protected commerce-support workflow", () => {
     const run = await runScenario({ scenarioId: "safe-address-change" }, deps);
     const action = run.actions[0];
     if (!action) throw new Error("Expected an action proposal.");
-    const result = approveSandboxAction(action, deps.repo);
-    deps.repo.completeAction(action.id, "executed", result);
+    const result = await approveSandboxAction(action, deps.repo);
+    await deps.repo.completeAction(action.id, "executed", result);
 
-    deps.repo.reset();
+    await deps.repo.reset();
 
-    expect(deps.repo.listRuns()).toHaveLength(0);
-    expect(deps.repo.getOrderByNumber("AC-1042")?.shippingAddress).toBe("14 Admiralty Way, Lekki");
+    expect(await deps.repo.listRuns()).toHaveLength(0);
+    expect((await deps.repo.getOrderByNumber("AC-1042"))?.shippingAddress).toBe(
+      "14 Admiralty Way, Lekki",
+    );
   });
 
-  it("never returns another tenant's order from a tenant-scoped list", () => {
+  it("never returns another tenant's order from a tenant-scoped list", async () => {
     const deps = dependencies();
-    const tenant = deps.repo.getDefaultTenant();
-    const numbers = deps.repo.getOrders(tenant.id).map((order) => order.number);
+    const tenant = await deps.repo.getDefaultTenant();
+    const numbers = (await deps.repo.getOrders(tenant.id)).map((order) => order.number);
 
     expect(numbers).toContain("AC-1042");
     expect(numbers).not.toContain("CIR-8841");

@@ -17,7 +17,7 @@ export async function POST(request: Request): Promise<Response> {
         ? { scenarioId: input.scenarioId }
         : { scenarioId: input.scenarioId, message: input.message },
     );
-    return Response.json({ run, snapshot: getDashboardSnapshot() }, { status: 201 });
+    return Response.json({ run, snapshot: await getDashboardSnapshot() }, { status: 201 });
   } catch (error) {
     return errorResponse(error);
   }

@@ -57,6 +57,7 @@ test("has no horizontal page overflow at representative viewport", async ({ page
 
 test("has no automatically detectable accessibility violations", async ({ page }) => {
   await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Normal order lookup" })).toBeVisible();
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });

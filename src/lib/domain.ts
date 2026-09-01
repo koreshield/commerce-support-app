@@ -162,7 +162,7 @@ export interface IntegrationStatus {
     mode: "detect" | "enforce";
     apiOrigin: string | null;
   };
-  data: { provider: "sqlite"; syntheticOnly: true };
+  data: { provider: "sqlite" | "d1"; syntheticOnly: true };
 }
 
 export interface DashboardSnapshot {

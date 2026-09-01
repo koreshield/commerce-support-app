@@ -35,16 +35,18 @@ The security provider and AI provider are interfaces with deterministic and live
 - `src/lib/server/security.ts` adapts simulator or Koreshield decisions to one internal shape.
 - `src/lib/server/ai.ts` adapts deterministic or OpenAI generation.
 - `src/lib/server/tools.ts` owns application authorization and sandbox execution.
-- `src/lib/server/repository.ts` owns schema, seed data, tenant-scoped reads, and the audit trail.
+- `src/lib/server/repository-d1.ts` owns D1 reads and writes in the Worker runtime.
+- `src/lib/server/repository.ts` provides the SQLite adapter for Node.js and isolated tests.
+- `src/lib/server/repository-contract.ts` keeps both storage implementations on one typed contract.
 - `src/app/api` exposes narrow route handlers to run, approve, reset, and inspect the demo.
 
 Provider credentials are read only in server modules. Browser components receive status and evidence, never keys.
 
 ## Data model
 
-SQLite contains tenants, customers, orders, knowledge documents, conversations, messages, workflow runs, security events, and action proposals. IDs crossing trust boundaries are represented as branded types in the TypeScript domain model.
+The database contains tenants, customers, orders, knowledge documents, conversations, messages, workflow runs, security events, and action proposals. IDs crossing trust boundaries are represented as branded types in the TypeScript domain model.
 
-The database defaults to `data/commerce-support.sqlite`. Tests create isolated in-memory repositories. `npm run demo:reset` replaces the demo state with a known synthetic baseline.
+Cloudflare Workers use a D1 binding named `DB`. Local development uses Wrangler's persisted D1 emulator. Node.js standalone and container deployments default to `data/commerce-support.sqlite`, and workflow tests create isolated in-memory SQLite repositories. Reset replaces either runtime with the same known synthetic baseline.
 
 ## Decision ordering
 

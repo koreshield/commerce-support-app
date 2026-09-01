@@ -21,6 +21,7 @@ The reference workflow protects customer messages, private merchant knowledge, o
 - Require human approval for state-changing actions.
 - Disable real payment, messaging, and fulfillment providers.
 - Record provider, mode, request ID, severity, confidence, latency, and outcome.
+- Keep production demo state in a dedicated D1 database with no real customer records.
 
 ## Deliberate limitations
 

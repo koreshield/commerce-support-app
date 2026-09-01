@@ -27,6 +27,7 @@ import type {
   ToolName,
   WorkflowRun,
 } from "@/lib/domain";
+import type { NewAction, SupportRepository } from "@/lib/server/repository-contract";
 
 const recordSchema = z.record(z.string(), z.unknown());
 
@@ -73,20 +74,8 @@ function rowObject(row: unknown): Record<string, unknown> {
   return recordSchema.parse(row);
 }
 
-export interface NewAction {
-  runId: RunId;
-  tenantId: TenantId;
-  conversationId: ConversationId;
-  toolName: ToolName;
-  args: Record<string, unknown>;
-  rationale: string;
-  risk: Severity;
-  decision: Decision;
-  status: ActionStatus;
-  result: Record<string, unknown> | null;
-}
-
-export class DemoRepository {
+export class DemoRepository implements SupportRepository {
+  readonly storageProvider = "sqlite" as const;
   readonly database: Database.Database;
 
   constructor(path: string) {
