@@ -1,8 +1,8 @@
 :root {
   --ink: #13211f; --muted: #53605c; --paper: #f3f0e9; --paper-deep: #e8e3d8;
   --surface: #fcfaf5; --raised: #fffefd; --line: #d8d3c8; --orange: #f05a28;
-  --orange-dark: #b93b15; --green: #167a5b; --green-soft: #dbefe6;
-  --amber: #9b6818; --amber-soft: #f8eacb; --red: #b6332c; --red-soft: #f5ddda;
+  --orange-dark: #b93b15; --green: #116448; --green-soft: #dbefe6;
+  --amber: #75480a; --amber-soft: #f8eacb; --red: #b6332c; --red-soft: #f5ddda;
   --shadow: 0 0 0 1px oklch(0 0 0 / .06), 0 1px 2px -1px oklch(0 0 0 / .06), 0 8px 24px -18px oklch(0 0 0 / .18);
   --body: "Manrope Variable", sans-serif; --display: "Newsreader Variable", Georgia, serif;
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;

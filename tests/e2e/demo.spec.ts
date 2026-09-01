@@ -82,6 +82,8 @@ test("keeps primary navigation reachable on mobile", async ({ page }, testInfo) 
 test("has no automatically detectable accessibility violations", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Normal order lookup" })).toBeVisible();
+  await page.getByRole("button", { name: /Run protected request/i }).click();
+  await expect(page.getByText("completed", { exact: true }).first()).toBeVisible();
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });
