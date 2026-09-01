@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DEMO_AI_PROVIDER: simulator
+      DEMO_SECURITY_PROVIDER: simulator
+      KORESHIELD_MODE: enforce
+    volumes:
+      - demo-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  demo-data:

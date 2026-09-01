@@ -1,0 +1,62 @@
+import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+test.beforeEach(async ({ request }) => {
+  const response = await request.post("/api/reset");
+  expect(response.ok()).toBeTruthy();
+});
+
+test("runs clean, blocked, and approval workflows", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Normal order lookup" })).toBeVisible();
+
+  await page.getByRole("button", { name: /Run protected request/i }).click();
+  await expect(page.getByText("completed", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("lookup order", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: /Input attack/i }).click();
+  await page.getByRole("button", { name: /Run protected request/i }).click();
+  await expect(page.getByText("blocked input", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(/stopped before the message reached the model/i)).toBeVisible();
+
+  await page.getByRole("button", { name: /Human approval/i }).click();
+  await page.getByRole("button", { name: /Run protected request/i }).click();
+  await expect(page.getByRole("button", { name: /Approve sandbox action/i })).toBeVisible();
+  await page.getByRole("button", { name: /Approve sandbox action/i }).click();
+
+  await page.getByRole("button", { name: "Support desk" }).click();
+  await expect(
+    page
+      .getByRole("complementary", { name: "Customer and order context" })
+      .getByText("8 Bourdillon Road, Ikoyi", { exact: true }),
+  ).toBeVisible();
+});
+
+test("exposes evidence and integration provenance", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Context attack/i }).click();
+  await page.getByRole("button", { name: /Run protected request/i }).click();
+  await expect(page.getByText("blocked context", { exact: true }).first()).toBeVisible();
+
+  await page.getByRole("button", { name: "Evidence" }).click();
+  await expect(page.getByRole("heading", { name: "Security evidence" })).toBeVisible();
+  await expect(page.getByText("Context attack", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Integration" }).click();
+  await expect(page.getByRole("heading", { name: "Integration map" })).toBeVisible();
+  await expect(page.getByText(/simulator · enforce/i)).toBeVisible();
+});
+
+test("has no horizontal page overflow at representative viewport", async ({ page }) => {
+  await page.goto("/");
+  const hasOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+  );
+  expect(hasOverflow).toBe(false);
+});
+
+test("has no automatically detectable accessibility violations", async ({ page }) => {
+  await page.goto("/");
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+});

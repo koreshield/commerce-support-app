@@ -1,0 +1,22 @@
+:root {
+  --ink: #13211f; --muted: #53605c; --paper: #f3f0e9; --paper-deep: #e8e3d8;
+  --surface: #fcfaf5; --raised: #fffefd; --line: #d8d3c8; --orange: #f05a28;
+  --orange-dark: #b93b15; --green: #167a5b; --green-soft: #dbefe6;
+  --amber: #9b6818; --amber-soft: #f8eacb; --red: #b6332c; --red-soft: #f5ddda;
+  --shadow: 0 0 0 1px oklch(0 0 0 / .06), 0 1px 2px -1px oklch(0 0 0 / .06), 0 8px 24px -18px oklch(0 0 0 / .18);
+  --body: "Manrope Variable", sans-serif; --display: "Newsreader Variable", Georgia, serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+* { box-sizing: border-box; }
+html { min-width: 320px; min-height: 100%; color: var(--ink); background: var(--paper); scroll-behavior: smooth; }
+body { min-height: 100vh; margin: 0; font: 14px/1.5 var(--body); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+button, textarea, input { color: inherit; font: inherit; }
+button, a { touch-action: manipulation; -webkit-tap-highlight-color: rgb(240 90 40 / 12%); }
+button:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, var(--orange) 72%, white); outline-offset: 3px; }
+h1, h2, h3 { text-wrap: balance; scroll-margin-top: 24px; }
+p { text-wrap: pretty; }
+::selection { color: var(--ink); background: #ffd3bd; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
