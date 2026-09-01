@@ -1,5 +1,6 @@
 import type { ActionId } from "@/lib/domain";
 import { assertSameOrigin, errorResponse } from "@/lib/server/http";
+import { assertDemoRateLimit } from "@/lib/server/rate-limit";
 import { getRepository } from "@/lib/server/repository-provider";
 import { approveSandboxAction } from "@/lib/server/tools";
 import { getDashboardSnapshot } from "@/lib/server/workflow";
@@ -10,6 +11,7 @@ export async function POST(
 ): Promise<Response> {
   try {
     assertSameOrigin(request);
+    await assertDemoRateLimit(request, "approve");
     const { id } = await context.params;
     const repository = await getRepository();
     const action = await repository.getAction(id as ActionId);

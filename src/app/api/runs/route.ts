@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { assertSameOrigin, errorResponse } from "@/lib/server/http";
+import { assertDemoRateLimit } from "@/lib/server/rate-limit";
 import { getDashboardSnapshot, runScenario } from "@/lib/server/workflow";
 
 const runRequestSchema = z.object({
@@ -11,6 +12,7 @@ const runRequestSchema = z.object({
 export async function POST(request: Request): Promise<Response> {
   try {
     assertSameOrigin(request);
+    await assertDemoRateLimit(request, "run");
     const input = runRequestSchema.parse(await request.json());
     const run = await runScenario(
       input.message === undefined

@@ -10,9 +10,9 @@
 * { box-sizing: border-box; }
 html { min-width: 320px; min-height: 100%; color: var(--ink); background: var(--paper); scroll-behavior: smooth; }
 body { min-height: 100vh; margin: 0; font: 14px/1.5 var(--body); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-button, textarea, input { color: inherit; font: inherit; }
+button, textarea, input, select { color: inherit; font: inherit; }
 button, a { touch-action: manipulation; -webkit-tap-highlight-color: rgb(240 90 40 / 12%); }
-button:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, var(--orange) 72%, white); outline-offset: 3px; }
+button:focus-visible, textarea:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, var(--orange) 72%, white); outline-offset: 3px; }
 h1, h2, h3 { text-wrap: balance; scroll-margin-top: 24px; }
 p { text-wrap: pretty; }
 ::selection { color: var(--ink); background: #ffd3bd; }

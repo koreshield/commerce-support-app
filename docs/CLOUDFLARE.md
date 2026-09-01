@@ -39,14 +39,14 @@ Use `npm run demo:reset` to restore the local D1 baseline. The UI reset performs
 
 ## Secrets
 
-The default production deployment uses deterministic simulators and needs no secrets. Set live provider keys with Wrangler rather than committing them:
+The production configuration uses real Koreshield decisions in detect mode while retaining the deterministic AI provider. It also applies a per-client Worker rate limit to mutation routes. Set live provider keys with Wrangler rather than committing them:
 
 ```bash
 npx wrangler secret put KORESHIELD_API_KEY
 npx wrangler secret put OPENAI_API_KEY
 ```
 
-Provider selection and non-secret endpoint configuration should be reviewed and set deliberately before enabling either live adapter. A deployment must not receive real customer or order data.
+The checked-in non-secret variables select Koreshield, its public API origin, and detect mode. The Koreshield workspace itself must also remain in detect mode until its evidence has been reviewed. A deployment must not receive real customer or order data.
 
 ## Rollback
 

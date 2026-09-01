@@ -4,7 +4,7 @@ import "@fontsource-variable/newsreader";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Commerce Support Lab · Koreshield reference client",
+  title: "Commerce Support · Koreshield reference client",
   description:
     "A synthetic AI commerce-support workflow demonstrating input, private-context, and proposed-action protection with Koreshield.",
 };

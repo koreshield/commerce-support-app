@@ -38,11 +38,24 @@ import { DEMO_SCENARIOS, getScenario } from "@/lib/scenarios";
 type View = "lab" | "inbox" | "evidence" | "integration";
 
 const VIEW_LABELS = {
-  lab: "Attack lab",
-  inbox: "Support desk",
+  lab: "Workflow",
+  inbox: "Support",
   evidence: "Evidence",
   integration: "Integration",
 } as const satisfies Record<View, string>;
+
+function ViewIcon({ view }: { view: View }): React.ReactElement {
+  switch (view) {
+    case "lab":
+      return <FlaskConical aria-hidden="true" />;
+    case "inbox":
+      return <Inbox aria-hidden="true" />;
+    case "evidence":
+      return <Activity aria-hidden="true" />;
+    case "integration":
+      return <Database aria-hidden="true" />;
+  }
+}
 
 const BOUNDARY_COPY = {
   input: {
@@ -198,7 +211,7 @@ export function ControlRoom({
             <Shield strokeWidth={2.25} />
           </span>
           <div>
-            <span className={styles.brandName}>Commerce support lab</span>
+            <span className={styles.brandName}>Commerce Support</span>
             <span className={styles.brandByline}>A Koreshield reference client</span>
           </div>
         </div>
@@ -206,11 +219,15 @@ export function ControlRoom({
           {(Object.keys(VIEW_LABELS) as View[]).map((item) => (
             <button
               className={view === item ? styles.navActive : styles.navButton}
+              aria-current={view === item ? "page" : undefined}
               key={item}
               onClick={() => setView(item)}
               type="button"
             >
-              {VIEW_LABELS[item]}
+              <span className={styles.navIcon}>
+                <ViewIcon view={item} />
+              </span>
+              <span className={styles.navLabel}>{VIEW_LABELS[item]}</span>
             </button>
           ))}
         </nav>
@@ -299,6 +316,21 @@ function LabView(props: LabViewProps): React.ReactElement {
         <div className={styles.railHeading}>
           <span className={styles.eyebrow}>Scenario library</span>
           <span className={styles.scenarioCount}>{DEMO_SCENARIOS.length}</span>
+        </div>
+        <div className={styles.mobileScenarioPicker}>
+          <label htmlFor="mobile-scenario">Test scenario</label>
+          <select
+            id="mobile-scenario"
+            name="mobile-scenario"
+            onChange={(event) => props.onScenarioChange(event.target.value)}
+            value={props.scenarioId}
+          >
+            {DEMO_SCENARIOS.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.shortLabel} · {item.category}
+              </option>
+            ))}
+          </select>
         </div>
         <div className={styles.scenarioList}>
           {DEMO_SCENARIOS.map((item, index) => (
@@ -566,7 +598,7 @@ function InboxView({ snapshot }: { snapshot: DashboardSnapshot }): React.ReactEl
           </div>
           <div className={styles.composerDisabled}>
             <LockKeyhole aria-hidden="true" />
-            Sending is disabled here. Use the attack lab to add synthetic messages.
+            Sending is disabled here. Use Workflow to add synthetic messages.
           </div>
         </section>
         <aside aria-label="Customer and order context" className={styles.contextPanel}>
@@ -629,10 +661,10 @@ function EvidenceView({
             <tbody>
               {runs.map((run) => (
                 <tr key={run.id}>
-                  <td><code>{run.id.slice(0, 8)}</code><small>{shortTime(run.createdAt)} UTC</small></td>
-                  <td>{getScenario(run.scenarioId)?.shortLabel ?? run.scenarioId}</td>
-                  <td><span className={statusTone(run.status)}>{runLabel(run.status)}</span></td>
-                  <td>
+                  <td data-label="Request"><code>{run.id.slice(0, 8)}</code><small>{shortTime(run.createdAt)} UTC</small></td>
+                  <td data-label="Scenario">{getScenario(run.scenarioId)?.shortLabel ?? run.scenarioId}</td>
+                  <td data-label="Outcome"><span className={statusTone(run.status)}>{runLabel(run.status)}</span></td>
+                  <td data-label="Boundaries">
                     <span className={styles.boundaryDots} aria-label={`${run.events.length} boundaries inspected`}>
                       {(["input", "context", "action"] as const).map((boundary) => {
                         const event = eventFor(run, boundary);
@@ -640,8 +672,8 @@ function EvidenceView({
                       })}
                     </span>
                   </td>
-                  <td>{run.events[0]?.provider ?? "—"}</td>
-                  <td><button aria-label={`Open request ${run.id.slice(0, 8)}`} onClick={() => onSelectRun(run.id)} type="button"><ArrowRight aria-hidden="true" /></button></td>
+                  <td data-label="Provider">{run.events[0]?.provider ?? "—"}</td>
+                  <td data-label="Open"><button aria-label={`Open request ${run.id.slice(0, 8)}`} onClick={() => onSelectRun(run.id)} type="button"><ArrowRight aria-hidden="true" /></button></td>
                 </tr>
               ))}
             </tbody>

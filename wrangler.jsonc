@@ -9,6 +9,18 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "vars": {
+    "DEMO_SECURITY_PROVIDER": "koreshield",
+    "KORESHIELD_API_URL": "https://api.koreshield.com",
+    "KORESHIELD_MODE": "detect"
+  },
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      "namespace_id": "2001",
+      "simple": { "limit": 30, "period": 60 }
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",

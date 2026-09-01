@@ -1,8 +1,8 @@
-# Commerce Support Lab
+# Commerce Support
 
 A synthetic commerce-support application for demonstrating where Koreshield sits in a real AI workflow. It shows the complete path from an untrusted customer message, through private knowledge retrieval and model generation, to a proposed support action.
 
-The lab is safe to run locally. Its default configuration is deterministic, uses invented customer data, and makes no external provider calls. Mutating tools require an explicit operator approval, and payment and messaging providers are intentionally absent.
+Commerce Support is safe to run locally. Its default configuration is deterministic, uses invented customer data, and makes no external provider calls. Mutating tools require an explicit operator approval, and payment and messaging providers are intentionally absent.
 
 ## What the demo proves
 

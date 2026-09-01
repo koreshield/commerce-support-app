@@ -25,7 +25,7 @@ The reference workflow protects customer messages, private merchant knowledge, o
 
 ## Deliberate limitations
 
-This lab does not implement production identity, role management, rate limiting, distributed audit storage, encryption-key management, deletion workflows, or incident response. It is not a substitute for client qualification or a production security review.
+This reference client does not implement production identity, role management, rate limiting, distributed audit storage, encryption-key management, deletion workflows, or incident response. It is not a substitute for client qualification or a production security review.
 
 The deterministic simulator recognizes only the included demonstration patterns. It is useful for repeatability, not for measuring detection quality. Any claim about live Koreshield behavior must come from a configured live run and retained evidence.
 
