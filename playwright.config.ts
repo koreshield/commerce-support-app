@@ -12,6 +12,10 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run demo:prepare && npm run dev -- --hostname 127.0.0.1 --port 3100",
+    env: {
+      DEMO_SECURITY_PROVIDER: "simulator",
+      KORESHIELD_MODE: "enforce",
+    },
     url: "http://127.0.0.1:3100/api/health",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

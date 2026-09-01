@@ -260,6 +260,8 @@ export function ControlRoom({
             onScenarioChange={chooseScenario}
             run={selectedRun}
             scenarioId={scenarioId}
+            securityMode={snapshot.integration.security.mode}
+            securityProvider={snapshot.integration.security.provider}
           />
         )}
         {view === "inbox" && <InboxView snapshot={snapshot} />}
@@ -306,6 +308,8 @@ interface LabViewProps {
   onMessageChange: (message: string) => void;
   onRun: () => Promise<void>;
   approveAction: (action: ActionProposalRecord) => Promise<void>;
+  securityMode: "detect" | "enforce";
+  securityProvider: "simulator" | "koreshield";
 }
 
 function LabView(props: LabViewProps): React.ReactElement {
@@ -364,7 +368,11 @@ function LabView(props: LabViewProps): React.ReactElement {
             <p>{scenario.description}</p>
           </div>
           <span className={styles.expectedBadge}>
-            Expected: {scenario.expectedBoundary === "none" ? "allow" : `stop at ${scenario.expectedBoundary}`}
+            Expected: {scenario.expectedBoundary === "none"
+              ? "allow"
+              : props.securityMode === "detect"
+                ? `detect at ${scenario.expectedBoundary}`
+                : `stop at ${scenario.expectedBoundary}`}
           </span>
         </div>
 
@@ -429,8 +437,9 @@ function LabView(props: LabViewProps): React.ReactElement {
         <div className={styles.providerFootnote}>
           <Shield aria-hidden="true" strokeWidth={1.75} />
           <p>
-            Each result names its provider. Simulator decisions are demonstration evidence, not
-            Koreshield production results.
+            {props.securityProvider === "koreshield"
+              ? `Koreshield is connected in ${props.securityMode} mode. Detected risk remains visible while host authorization still governs every action.`
+              : "Each result names its provider. Simulator decisions are demonstration evidence, not Koreshield production results."}
           </p>
         </div>
       </aside>
@@ -741,7 +750,7 @@ OPENAI_MODEL=gpt-4o-mini
 DEMO_SECURITY_PROVIDER=koreshield
 KORESHIELD_API_URL=https://api.koreshield.com
 KORESHIELD_API_KEY=ks_••••••••
-KORESHIELD_MODE=enforce`}</pre>
+KORESHIELD_MODE=detect`}</pre>
           <p>Keys remain on the server and are never included in browser state or API responses.</p>
         </section>
         <section className={styles.guaranteesCard}>
